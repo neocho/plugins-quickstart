@@ -12,9 +12,10 @@ app = quart_cors.cors(quart.Quart(__name__),
 
 # Keep track of todo's. Does not persist if Python session is restarted.
 _TODOS = {
-  'neo': ['https://plugins-quickstart.datboineo.repl.co/logo.png', 'fitness']
+  'neo': ['https://plugins-quickstart.datboineo.repl.co/logo.png', 'write a poem about turtles', 'lose 10 pounds', 'calculate 3+5 in python']
 }
 
+# "Figure out this coding problem in python: \n\n Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target. You may assume that each input would have exactly one solution, and you may not use the same element twice. You can return the answer in any order. \n\n use this function for the two sum implementation: int* twoSum(int* nums, int numsSize, int target, int* returnSize){} \n\n run the code and make sure it works for edge cases"
 
 @app.get("/")
 async def base():
@@ -26,6 +27,17 @@ async def get_todos(username):
   todos = _TODOS.get('neo', [])
   print("todos", todos)
   return jsonify({'todos': todos}), 200
+
+@app.route("/eval", methods=["GET"])
+async def eval_endpoint():
+    string = request.args.get("string")
+    if string is None:
+        return jsonify({"error": "Missing 'string' parameter"}), 400
+    try:
+        result = eval(string)
+        return jsonify({"result": str(result)})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
 
 @app.get("/logo.png")
